@@ -1,0 +1,11 @@
+/* Background */
+
+position: absolute;
+width: 1453px;
+height: 3767px;
+left: -5px;
+top: 0px;
+
+background: linear-gradient(140.63deg, #FFFFFF 0%, #AABFD3 72.78%, #337BBF 96.96%);
+
+import Link from "next/link"

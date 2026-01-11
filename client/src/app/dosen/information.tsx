@@ -1,0 +1,160 @@
+'use client'
+
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { ArrowRightIcon, Award, BarChart3Icon } from 'lucide-react';
+import { fetchWithToken } from '@/lib/fetchWithToken';
+import { motion } from 'framer-motion';
+import { fadeIn } from '../variant';
+
+const Index = (): JSX.Element => {
+  const [studentCount, setStudentCount] = useState(0);
+  const [materialCount, setMaterialCount] = useState(0);
+
+  useEffect(() => {
+    async function fetchCounts() {
+      try {
+        const res = await fetchWithToken('/users/');
+        const resData = await res.json();
+
+        if (Array.isArray(resData)) {
+          const students = resData.filter(user => user.role === 'student').length;
+          setStudentCount(students);
+        } else {
+          console.error("Unexpected response format:", resData);
+        }
+
+      } catch (error) {
+        console.error("Failed to fetch user counts:", error);
+      }
+    }
+
+    fetchCounts();
+  }, []);
+
+  useEffect(() => {
+    async function fetchMaterials() {
+      try {
+        const materialRes = await fetchWithToken('/materials');
+        const materialData = await materialRes.json();
+        
+        if (Array.isArray(materialData)) {
+          setMaterialCount(materialData.length);
+        } else {
+          console.error("Unexpected response format:", materialData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch materials:", error);
+      }
+    }
+
+    fetchMaterials();
+  }, []);
+
+   const dashboardCards = [
+    {
+      title: 'Mahasiswa',
+      subtitle: `${studentCount} Akun`,
+      count: `${studentCount}`,
+      imageUrl: '/student.png',
+      bgColor: 'from-rose-400 to-rose-600',
+      textColor: 'text-rose-100',
+    },
+
+    {
+      title: 'Kursus',
+      subtitle: `${materialCount} Materi`,
+      count: `${materialCount}`,
+      imageUrl: '/courses.png',
+      bgColor: 'from-purple-400 to-purple-600',
+      textColor: 'text-purple-100',
+    },
+  ];
+
+  return (
+    <div className='relative min-h-screen w-full bg-gradient-to-br from-[#FFEBD2] via-[#FFD9A0] to-[#FAB12F] overflow-x-hidden'>
+      <div className='container mx-auto px-4 py-16 md:px-8 lg:pt-80 relative z-10 flex flex-col h-full mt-[-5rem]'>
+        <div className='flex flex-col items-center lg:items-start lg:flex-row lg:justify-between lg:gap-5 xl:gap-12'>
+          {/* Left Side: Information Text */}
+          <div className='max-w-lg mb-12 lg:mb-0 text-center lg:text-left order-2 lg:order-1'>
+            <div className='inline-block mt-[4rem] sm:mt-[1rem] mb-3 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full'>
+              <motion.div 
+              variants={fadeIn('down', 0.1)}
+              initial='hidden'
+              whileInView={'show'}
+              viewport={{once: false, amount: 0.7}}
+              className='flex items-center gap-2'>
+                <BarChart3Icon className='h-5 w-5 text-[#002c56]' />
+                <span className='font-medium text-sm text-[#002c56]'>
+                  Gambaran Umum
+                </span>
+              </motion.div>
+            </div>
+
+            <motion.h1 
+            variants={fadeIn('left', 0.1)}
+            initial='hidden'
+            whileInView={'show'}
+            viewport={{once: false, amount: 0.7}}
+            className='font-outfit text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-tight'>
+              <span className='text-[#FAB12F]'>Informasi </span>
+              <span className='text-[#1F1A17]'>Dashboard</span>
+            </motion.h1>
+
+            <motion.p 
+            variants={fadeIn('right', 0.1)}
+            initial='hidden'
+            whileInView={'show'}
+            viewport={{once: false, amount: 0.7}}
+            className='font-outfit text-base md:text-lg font-medium leading-relaxed text-[#1F1A17]/90 mb-[-1rem]'>
+              Gambaran Umum tentang aktivitas platform — termasuk total jumlah siswa dan kursus yang tersedia.
+              Tetap terinformasi dan kelola semuanya secara efisien dari satu tempat.
+            </motion.p>
+          </div>
+
+          {/* Right Side: Dashboard Cards */}
+          <div className='w-full max-w-xl order-1 lg:order-2'>
+            <motion.div 
+            variants={fadeIn('up', 0.1)}
+            initial='hidden'
+            whileInView={'show'}
+            viewport={{once: false, amount: 0.7}}
+            className='grid grid-cols-1 sm:grid-cols-2 gap-6 mt-[5rem]'>
+              {dashboardCards.map((card, index) => (
+                <Card
+                  key={index}
+                  className={`w-full overflow-hidden border-none shadow-lg bg-gradient-to-br ${card.bgColor} rounded-2xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}
+                >
+                  <CardContent className='p-8'>
+                    <div className='flex flex-col items-center justify-center text-center space-y-4'>
+                      <img
+                        src={card.imageUrl}
+                        alt={card.title}
+                        className='h-16 w-16 object-contain'
+                      />
+                      <div>
+                        <h2 className='font-outfit text-2xl font-bold text-white'>
+                          {card.title}
+                        </h2>
+                        <p className={`font-outfit text-base font-medium ${card.textColor}`}>
+                          {card.subtitle}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </motion.div>
+
+
+            {/* Subtle decoration element */}
+            <div className='hidden lg:block absolute top-20 right-20 w-32 h-32 bg-yellow-300 rounded-full blur-3xl opacity-20 -z-10'></div>
+            <div className='hidden lg:block absolute bottom-20 left-20 w-40 h-40 bg-blue-300 rounded-full blur-3xl opacity-20 -z-10'></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Index;
