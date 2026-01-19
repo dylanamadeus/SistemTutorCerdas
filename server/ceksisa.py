@@ -1,7 +1,7 @@
 import requests
 from datetime import datetime, timezone, timedelta
 
-API_KEY = "sk_410cf548129218e50e1adae1f438e0c7c4eba86c6b3d0a72"
+API_KEY = "xxx"
 
 headers = {
     "xi-api-key": API_KEY,
